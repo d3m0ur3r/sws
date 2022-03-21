@@ -15,7 +15,7 @@ from sws_rich_table import sws_rich_table
 from sws_pretty_table import sws_prettytable
 from sws_argparser import arg_parser
 
-creator_and_author = 'd4r4k0n'
+creator_and_author = 'd3m0ur3r'
 
 
 class SWS:
@@ -408,7 +408,7 @@ class SWS:
                 sws_prettytable(self.url_list, self.sws_all, self.sws_color, self.title,
                                 self.sws_range)  # Uses prettytable
 
-        self.get_raw_ids()  # makes a list of raw ids only 
+        self.get_raw_ids()  # makes a list of raw ids only
 
         if self.sws_output:  # if -o switch is used, saves output to a file.
             self.save_file()
