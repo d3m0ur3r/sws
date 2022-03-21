@@ -15,21 +15,23 @@ def arg_parser() -> argparse.Namespace:
     # ArgParser - Define Usage
     prog_name = sys.argv[0]
     parser = argparse.ArgumentParser(prog=prog_name,
-                                     epilog="""
-╔═══════════════════════════════════════════════[ Examples ]══════════════════════════════════════════════╗                                         
-║   -i <APPID>                                                                                            ║
-║   -i <APPID> -r <RANGE>                                                                                 ║
-║   -i <APPID> -r <RANGE> -o <FILE>                                                                       ║
-║   -i <APPID> -r <RANGE> --most-subs                                                                     ║
-║   -i <APPID> -r <RANGE> --most-subs --filter-author <AUTHOR>                                            ║
-║   -i <APPID> -s <SEARCH STRING>                                                                         ║ 
-╠═════════════════════════════════════════════════════════════════════════════════════════════════════════╣
-║ SWS is a script designed to scrape steam workshop for mods.                                             ║
-║ It does so by looking through a range of pages and then scrape all the urls.                            ║
-║ Should be used in conjunction with https://steamworkshopdownloader.io/                                  ║
-╚═════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+                                     epilog=f"""
+╔══════════════════════════════════════[ Examples ]═════════════════════════════════════╗                                         
+║  -c                                                                                   ║
+║  -i <APP_ID> -fac -s <SEARCH_STRING>                                                  ║
+║  -i <APP_ID> -fc --most-subs -s <SEARCH_STRING> -r <RANGE>                            ║
+║  -i <APP_ID> -fac --most-subs -s <SEARCH_STRING> -r <RANGE>                           ║
+║  -i <APP_ID> -u <USER_ID>                                                             ║
+║  -i <APP_ID> -u <USER_ID> -s <SEARCH_STRING>                                          ║
+║  -i <APP_ID> -r <RANGE> --filter-author <AUTHOR_NAME>                                 ║ 
+╠═══════════════════════════════════════════════════════════════════════════════════════╣
+║  SWS is a script designed to scrape steam workshop for mods.                          ║
+║  It does so by looking through a range of pages and then scrape all the urls.         ║
+║  Should be used in conjunction with https://steamworkshopdownloader.io/               ║
+║  For more information, see https://github.com/d3m0ur3r/sws                            ║
+╚═══════════════════════════════════════════════════════════════════════════════════════╝
 """,
-                                     usage=f"{prog_name} [options] -i <appid> -r <range>",
+                                     usage=f"{prog_name} [options] -i <appid>",
                                      prefix_chars="-",
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
 
