@@ -408,7 +408,7 @@ class SWS:
                 sws_prettytable(self.url_list, self.sws_all, self.sws_color, self.title,
                                 self.sws_range)  # Uses prettytable
 
-        self.get_raw_ids()  # makes a list of raw ids only
+        self.get_raw_ids()  # makes a list of raw ids only 
 
         if self.sws_output:  # if -o switch is used, saves output to a file.
             self.save_file()
