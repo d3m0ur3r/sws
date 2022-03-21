@@ -11,24 +11,6 @@ banner = r"""
 """
 
 
-def icons(icon):  # styling on icons
-
-    dash_icon = '\x1b[1;31m-\x1b[0m'
-    plus_icon = '\x1b[1;32m+\x1b[0m'
-    exclamation_icon = '\x1b[1;33m!\x1b[0m'
-
-    if icon == '-':
-        icon = dash_icon
-    elif icon == '+':
-        icon = plus_icon
-    elif icon == '!':
-        icon = exclamation_icon
-    else:
-        icon = 'none'
-
-    return icon
-
-
 def arg_parser() -> argparse.Namespace:
     # ArgParser - Define Usage
     prog_name = sys.argv[0]
