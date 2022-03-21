@@ -322,11 +322,6 @@ class SWS:
 
         self.url_list += request_get(_page)
 
-        if not self.sws_all:  # gets raw ids only
-            self.raw_ids = [search_id + "\n" for search_id, search_rate, _, _, _ in self.url_list if search_rate != "0"]
-        else:
-            self.raw_ids = [search_id + "\n" for search_id, _, _, _, _ in self.url_list]
-
     def search_user(self) -> str:
         """searches for a user @ app id [profiles/id]"""
         if self.sws_user_id.isdigit():
@@ -351,6 +346,12 @@ class SWS:
                        }
 
         self.url_list.sort(key=lambda s_ra: s_ra[sorting_dic.get(sort.upper(), 1)], reverse=order)  # Sorts by STARS ASC
+
+    def get_raw_ids(self):
+        if not self.sws_all:  # gets raw ids only
+            self.raw_ids = [search_id + "\n" for search_id, search_rate, _, _, _ in self.url_list if search_rate != "0"]
+        else:
+            self.raw_ids = [search_id + "\n" for search_id, _, _, _, _ in self.url_list]
 
     def filter_author(self) -> list:
         """Filters a/or multiple authors
@@ -406,6 +407,9 @@ class SWS:
             else:
                 sws_prettytable(self.url_list, self.sws_all, self.sws_color, self.title,
                                 self.sws_range)  # Uses prettytable
+
+        self.get_raw_ids()  # makes a list of raw ids only
+
         if self.sws_output:  # if -o switch is used, saves output to a file.
             self.save_file()
 
