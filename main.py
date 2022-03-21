@@ -169,7 +169,7 @@ class SWS:
             f"[\033[1;34m{self.workshop}\033[0m] "
             f"[\033[1;35m{self.entries} Entries\033[0m] "
             f"[\033[1;36m{math.ceil(int(self.entries) / 30)} Pages\033[0m]"
-            )
+        )
 
         return self.workshop
 
@@ -263,8 +263,9 @@ class SWS:
                     r'(?<=href=")https://steamcommunity.com/sharedfiles/filedetails/\?id=([0-9]+)',
                     webpage)
                 search_rating: list = re.findall(
-                    r'(?<=src="https://community.akamai.steamstatic.com/public/images/sharedfiles/)(\d|not-yet)',
+                    r'(?<=/images/sharedfiles/)(\d|not-yet)',
                     webpage)
+                # print(search_rating) # Debug
                 search_title: list = re.findall('(?<=workshopItemTitle ellipsis">).+(?=</div>)', webpage)
 
                 for x in search_id:
@@ -300,12 +301,12 @@ class SWS:
 
                 # DEBUGGING
                 # print(
-                #     len(search_id) ==
-                #     len(search_rating) ==
-                #     len(search_author) ==
-                #     len(search_username) ==
-                #     len(search_title)
-                #     )
+                #     search_id,
+                #     search_rating,
+                #     search_author,
+                #     search_username,
+                #     search_title,
+                # )
 
                 output_list: list = [(s_id, s_ra, s_au.capitalize(), s_un, s_na.capitalize()) for
                                      s_id, s_ra, s_au, s_un, s_na in
