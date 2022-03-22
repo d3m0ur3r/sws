@@ -111,7 +111,7 @@ def arg_parser() -> argparse.Namespace:
                         version=f'{banner}'
                                 f'\nSteam '
                                 f'\nWorkshop '
-                                f'\nScraper v1.4.4 by \x1b[1;32md3m0ur3r\x1b[0m ',
+                                f'\nScraper v1.5.1 by \x1b[1;32md3m0ur3r\x1b[0m ',
                         help=f'Prints the version of {prog_name}')
 
     args = parser.parse_args()  # Engages ArgParser
