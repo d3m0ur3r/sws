@@ -55,6 +55,10 @@ def arg_parser() -> argparse.Namespace:
                         action='store_true',
                         help='Uses rich tables to display output')
 
+    parser.add_argument('--debug',
+                        action='store_true',
+                        help=argparse.SUPPRESS)
+
     parser.add_argument('-c', '--color',
                         action='store_true',
                         help="Colors the output")

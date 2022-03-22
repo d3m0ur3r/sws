@@ -1,3 +1,4 @@
+#!/bin/env python
 """
 Steam Workshop Scraper is built around scraping appid's.
 SWS is built in python 3.9
@@ -15,6 +16,7 @@ from rich.progress import track
 from sws_rich_table import sws_rich_table
 from sws_pretty_table import sws_prettytable
 from sws_argparser import arg_parser
+from sws_cache import SWSCache
 
 creator_and_author = 'd3m0ur3r'
 
@@ -22,14 +24,6 @@ creator_and_author = 'd3m0ur3r'
 class SWS:
     def __init__(self):
         super(SWS, self).__init__()
-
-        _all_ = {'self.url_list': 'Main list with all output going into table',
-                 'self.raw_ids': 'Contains ids only',
-                 'self.sws_filter_author': '--filter-author, author search method',
-                 'self.sws_search': '-s, --search, search method',
-                 'self.sws_echo': '-e, --echo, echoes output to terminal, is set True as default',
-                 'self.sws_rich': '--rich-table, determines if rich tables is used instead of the default prettytable'
-                 }
 
         # ═══════════════════════════════════════════════[ LISTS ]═══════════════════════════════════════════════════ #
         self.url_list: list = []  # Main list with all output going into table.
@@ -61,9 +55,10 @@ class SWS:
         self.entries: str = ""  # stores how many entries(mods) available on at a workshop.
         self.sws_sort_by: str = ""  # --sort-by, stores sort by id, stars, author, userid, title
         self.sws_user_id: str = ""  # -u, --user, stores userid being searched
-        self._url_search_string: str = ""  # stores current url
+        self.url_string_search: str = ""  # stores current url
         # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════ #
         self.args = arg_parser()  # argparse main variable.
+        self.cache = SWSCache(self.args)  # Handles cache
         # ═══════════════════════════════════════════════[ ARGS ]════════════════════════════════════════════════════ #
         self.sws_range = "1" if not self.args.range else self.args.range  # flag -r, --range,     defaults to page 1
         self.sws_app_id = 107410 if not self.args.id else self.args.id  # flag -i, --id,        defaults to 107410
@@ -145,11 +140,37 @@ class SWS:
     def run(self) -> None:
         """Main run method."""
 
-        workshop_validity = self.probe_app_id()  # resolves name and workshop validity.
-        if self.sws_fast and workshop_validity:
-            self.get_steam_workshop_links(True)  # 'requests.get' with concurrent.futures
-        elif workshop_validity:
-            self.get_steam_workshop_links()  # regular 'requests.get' behavior
+        if o := self.cache.handle_cache():
+            self.url_list += o
+            print(f"[{self.icons('+')}] Using cache.")
+        else:
+            workshop_validity = self.probe_app_id()  # resolves name and workshop validity.
+            if self.sws_fast and workshop_validity:
+                self.get_steam_workshop_links(True)  # 'requests.get' with concurrent.futures
+            elif workshop_validity:
+                self.get_steam_workshop_links()  # regular 'requests.get' behavior
+
+        self.sort_output(self.sws_sort_by) if self.sws_sort_by else self.sort_output()  # Sorts output
+
+        if self.sws_filter_author:
+            self.url_list = self.filter_author()  # --filter-author
+
+        if self.sws_echo:  # if -e switch is used, echoes to terminal (default).
+
+            if self.sws_rich:
+                sws_rich_table(self.url_list, self.sws_all, self.sws_color, self.title,
+                               self.sws_range)  # Uses rich tables
+            else:
+                sws_prettytable(self.url_list, self.sws_all, self.sws_color, self.title,
+                                self.sws_range)  # Uses prettytable
+
+        self.get_raw_ids()  # makes a list of raw ids only
+
+        if self.sws_output:  # if -o switch is used, saves output to a file.
+            self.save_file()
+
+        if self.args.debug:
+            self.debugger()  # Runs debugging
 
     def save_file(self) -> None:
         """Saves output to file"""
@@ -228,15 +249,11 @@ class SWS:
                              '&browsesort=totaluniquesubscribers&section=readytouseitems&actualsort=totaluniquesubscribers' if self.sws_most_subs else '']
 
         string = url_app_id if not self.sws_user_id else '' + ''
-
-        for v in steam_web_strings:
-            if v:
-                string += v
-
+        string += ''.join(steam_web_strings)
         string += f'&browsesort=trend&days=90' if string == url_app_id else ''
 
-        self._url_search_string = string + '&p='
-        _url_page: str = self._url_search_string + str(_page)
+        self.url_string_search = string + '&p='
+        _url_page: str = self.url_string_search + str(_page)
 
         return _url_page
 
@@ -377,7 +394,7 @@ class SWS:
     def get_steam_workshop_links(self, switch: bool = False) -> None:
         """Retrieves workshop links via Regex"""
 
-        urls = [self._url_search_string + str(x) for x in range(self.low_num, self.high_num + 1)]
+        urls = [self.url_string_search + str(x) for x in range(self.low_num, self.high_num + 1)]
 
         if switch:
             with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -395,24 +412,24 @@ class SWS:
                                description='[#BA55D3 bold]Fetching IDs'):
                 self.harvest_ids(_page)
 
-        self.sort_output(self.sws_sort_by) if self.sws_sort_by else self.sort_output()
+        self.cache.save_command()
+        self.cache.save_cache(self.url_list)
 
-        if self.sws_filter_author:
-            self.url_list = self.filter_author()
+    def debugger(self) -> None:
+        """Prints out information for debugging"""
+        print('═══════════════════════════════════════════════[ DEBUG ]═══════════════════════════════════════════════')
+        _all_ = [f"{self.low_num = }",
+                 f"{self.high_num = }",
+                 f"{self.title = }",
+                 f"{self.workshop = }",
+                 f"{self.entries = }",
+                 f"{self.url_string_search = }"]
 
-        if self.sws_echo:  # if -e switch is used, echoes to terminal.
+        _ = *map(print, _all_),
 
-            if self.sws_rich:
-                sws_rich_table(self.url_list, self.sws_all, self.sws_color, self.title,
-                               self.sws_range)  # Uses rich tables
-            else:
-                sws_prettytable(self.url_list, self.sws_all, self.sws_color, self.title,
-                                self.sws_range)  # Uses prettytable
-
-        self.get_raw_ids()  # makes a list of raw ids only
-
-        if self.sws_output:  # if -o switch is used, saves output to a file.
-            self.save_file()
+        for k, v in self.args.__dict__.items():
+            print(f"{k} = \x1b[32m{v}\x1b[0m")
+        print('═══════════════════════════════════════════════════════════════════════════════════════════════════════')
 
 
 def main() -> int:
