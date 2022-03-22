@@ -37,19 +37,24 @@ def arg_parser() -> argparse.Namespace:
 
     parser.add_argument('-r', '--range',
                         action='store',
-                        metavar='Range',
+                        metavar='\tRange',
+                        default='1',
                         type=str,
-                        help=f'Range: [lownum-highnum] example: 1-40 or 1 for page 1 etc.')
+                        help=f'[lownum-highnum] example: 1-40 or 1 for page 1 etc.')
 
     parser.add_argument('-u', '--user',
                         action='store',
-                        metavar='user',
+                        metavar='\tUser',
                         type=str,
                         help='Searches for mods at a user with app id')
 
     parser.add_argument('-e', '--echo',
                         action='store_true',
                         help='Echoes output to terminal')
+
+    parser.add_argument('--clear-cache',
+                        action='store_true',
+                        help='Clears cache for given AppID')
 
     parser.add_argument('--rich-table',
                         action='store_true',
@@ -77,7 +82,7 @@ def arg_parser() -> argparse.Namespace:
 
     parser.add_argument('--filter-author',
                         action='store',
-                        metavar='Filter Author',
+                        metavar='\tFilter Author',
                         nargs='+',
                         help='Filters chosen author')
 
@@ -98,6 +103,7 @@ def arg_parser() -> argparse.Namespace:
                         action='store',
                         metavar='AppId',
                         type=int,
+                        default=107410,
                         required=False,
                         help=f'Steam AppId number example: 920210')
 

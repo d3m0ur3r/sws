@@ -56,15 +56,16 @@ class SWS:
         self.sws_sort_by: str = ""  # --sort-by, stores sort by id, stars, author, userid, title
         self.sws_user_id: str = ""  # -u, --user, stores userid being searched
         self.url_string_search: str = ""  # stores current url
+        self.clear_cache: bool  # --clear-cache @ given app id
         # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════ #
         self.args = arg_parser()  # argparse main variable.
         self.cache = SWSCache(self.args)  # Handles cache
         # ═══════════════════════════════════════════════[ ARGS ]════════════════════════════════════════════════════ #
-        self.sws_range = "1" if not self.args.range else self.args.range  # flag -r, --range,     defaults to page 1
-        self.sws_app_id = 107410 if not self.args.id else self.args.id  # flag -i, --id,        defaults to 107410
+        self.sws_range = self.args.range  # flag -r, --range,                                       defaults to 1
+        self.sws_app_id = self.args.id  # flag -i, --id,                                            defaults to 107410
         self.sws_all = self.args.all  # flag -a, --all
         self.sws_output = self.args.outfile  # flag -o, --output
-        self.sws_echo = True if not self.sws_output else self.args.echo  # flag -e, --echo       True if not -o
+        self.sws_echo = True if not self.sws_output else self.args.echo  # flag -e, --echo          True if not -o
         self.sws_search = self.args.search  # flag -s, --search
         self.sws_fast = self.args.fast  # flag -f, --fast
         self.sws_rich = self.args.rich_table  # flag     --rich-table
@@ -73,7 +74,12 @@ class SWS:
         self.sws_filter_author = self.args.filter_author  # flag     --filter-author
         self.sws_sort_by = self.args.sort_by  # flag    --sort-by
         self.sws_user_id = self.args.user  # flag -u, --user
+        self.clear_cache = self.args.clear_cache  # flag --clear-cache
         # ═══════════════════════════════════════════════════════════════════════════════════════════════════════════ #
+
+        if self.clear_cache:
+            self.cache.flush_cache()
+            raise SystemExit(0)
 
         if self.sws_most_subs and self.sws_user_id:
             print('[{0}] You can\'t use --most-subs and --user together!'.format(self.icons('!')))
@@ -150,10 +156,13 @@ class SWS:
             elif workshop_validity:
                 self.get_steam_workshop_links()  # regular 'requests.get' behavior
 
-        self.sort_output(self.sws_sort_by) if self.sws_sort_by else self.sort_output()  # Sorts output
-
         if self.sws_filter_author:
             self.url_list = self.filter_author()  # --filter-author
+
+        if self.sws_sort_by:
+            self.sort_output(self.sws_sort_by)
+        else:
+            self.sort_output()
 
         if self.sws_echo:  # if -e switch is used, echoes to terminal (default).
 
@@ -348,7 +357,7 @@ class SWS:
         else:
             return f'https://steamcommunity.com/id/{self.sws_user_id}/myworkshopfiles/?appid={self.sws_app_id}&numperpage=30'
 
-    def sort_output(self, sort='STARS'):
+    def sort_output(self, sort='STARS') -> None:
         """sorts list by given arg"""
 
         if sort.upper() == 'TITLE' or sort.upper() == 'AUTHOR' or sort.upper() == 'USERID':
@@ -387,8 +396,6 @@ class SWS:
 
             search_list += search
 
-        self.sort_output(self.sws_sort_by) if self.sws_sort_by else self.sort_output()
-
         return search_list
 
     def get_steam_workshop_links(self, switch: bool = False) -> None:
@@ -412,8 +419,7 @@ class SWS:
                                description='[#BA55D3 bold]Fetching IDs'):
                 self.harvest_ids(_page)
 
-        self.cache.save_command()
-        self.cache.save_cache(self.url_list)
+        self.cache.store_data(self.url_list)
 
     def debugger(self) -> None:
         """Prints out information for debugging"""

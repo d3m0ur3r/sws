@@ -4,5 +4,4 @@
 /dist/
 /compress_rar.py
 /export.ps1
-/SWScache.json
-/SWSCache_command.json
+/.cache/
