@@ -139,8 +139,8 @@ class SWSCache:
                     break
 
                 else:
-                    print('[!] y or N, case sensitive!')
-                    prompt = input('\x1b[1;5;31mClear cache ? [y/N]: \x1b[0m')
+                    print('\x1b[1;32m[!] Aborting\x1b[0m')
+                    break
 
 
 def main() -> int:
