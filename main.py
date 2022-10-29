@@ -1,11 +1,11 @@
 #!/bin/env python
 """
-Steam Workshop Scraper is built around scraping appid's.
+Steam Workshop Scraper is built around scraping workshop ids from the steam workshop.
 SWS is built in python 3.9
-SWS is a script designed to scrape steam workshop for mods.
-It does so by looking through a range of pages and then scrape all the urls.
-Should be used in conjunction with https://steamworkshopdownloader.io/
-SWS functions as cli tool.
+SWS is a script designed to scrape steam workshops for mods.
+It does so by looking through a range of pages and then scraping all the URLs.
+Should be used in conjunction with SteamCMD
+SWS functions as a CLI tool.
 """
 import requests
 import re
@@ -376,9 +376,9 @@ class SWS:
 
     def get_raw_ids(self):
         if not self.sws_all:  # gets raw ids only
-            self.raw_ids = [search_id + "\n" for search_id, search_rate, _, _, _ in self.url_list if search_rate != "0"]
+            self.raw_ids = [f"workshop_download_item {self.sws_app_id} {search_id}\n" for search_id, search_rate, _, _, _ in self.url_list if search_rate != "0"]
         else:
-            self.raw_ids = [search_id + "\n" for search_id, _, _, _, _ in self.url_list]
+            self.raw_ids = [f"workshop_download_item {self.sws_app_id} {search_id}\n" for search_id, _, _, _, _ in self.url_list]
 
     def filter_author(self) -> list:
         """Filters a/or multiple authors

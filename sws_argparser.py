@@ -2,12 +2,7 @@ import sys
 import argparse
 
 banner = r"""
- _____  _    _  _____ 
-/  ___|| |  | |/  ___|
-\ `--. | |  | |\ `--. 
- `--. \| |/\| | `--. \
-/\__/ /\  /\  //\__/ /
-\____/  \/  \/ \____/ 
+banner here
 """
 
 
@@ -27,11 +22,12 @@ def arg_parser() -> argparse.Namespace:
 ╠═══════════════════════════════════════════════════════════════════════════════════════╣
 ║  SWS is a script designed to scrape steam workshop for mods.                          ║
 ║  It does so by looking through a range of pages and then scrape all the urls.         ║
-║  Should be used in conjunction with https://steamworkshopdownloader.io/               ║
+║  Should be used in conjunction with SteamCMD                                          ║
+║  https://developer.valvesoftware.com/wiki/SteamCMD#Downloading_SteamCMD               ║
 ║  For more information, see https://github.com/d3m0ur3r/sws                            ║
 ╚═══════════════════════════════════════════════════════════════════════════════════════╝
 """,
-                                     usage=f"{prog_name} [options] -i <appid>",
+                                     usage=f"{prog_name} [flags] [args]",
                                      prefix_chars="-",
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
 

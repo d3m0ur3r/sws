@@ -1,7 +1,8 @@
 /SWS.spec
-/__pycache__/
-/build/
-/dist/
+/__pycache__
+/build
+/dist
 /compress_rar.py
 /export.ps1
-/.cache/
+/.cache
+/.ruff_cache

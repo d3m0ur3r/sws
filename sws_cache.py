@@ -14,7 +14,6 @@ class SWSCache:
         self.current_command: dict = self.parse_command(command)
         self.last_command: dict = {}
         self.path = f'./.cache/{self.app_id}/'
-        self.salt_path = os.path.join(self.path, '/.salt/')
 
         self.data_file = self.filename_generator('data')
         self.arg_file = self.filename_generator('arg')
